@@ -16,6 +16,8 @@ head(Data)
 Sum steps by day, create Histogram, and calculate mean and median.
 ```{r StepPerday} 
 library(ggplot2)
+library(scales)
+library(Hmisc)
 stepsperDay <- tapply(Data$steps, Data$date, sum, na.rm=TRUE)
 qplot(stepsperDay, binwidth=500, xlab='Total number of steps per day', ylab='Frequency')
 Mean <- mean(stepsperDay)
@@ -30,10 +32,39 @@ AvgstepsByInterval <- aggregate(steps ~ interval, Data, mean,na.rm=TRUE)
 plot(AvgstepsByInterval$interval,AvgstepsByInterval$steps, type="l", xlab="5 Minute Interval", ylab="Average Number of Steps",main="Average daily activity pattern")
 maxInterval <- AvgstepsByInterval[which.max(AvgstepsByInterval$steps),1]
 ```
-Maximum number of step is: `r maxInterval`
+Interval with Maximum number of step is: `r maxInterval`
+
 
 ## Imputing missing values
+#####  Calculate and report the total number of missing values in the dataset 
+```{r}
+MissingValues <- length(which(is.na(Data$steps)))
+```
 
+Number of missing values: `r MissingValues`
+
+##### Devise a strategy for filling in all of the missing values in the dataset.
+##### Create a new dataset that is equal to the original dataset but with the missing data filled in.
+```{r}
+activityDataImputed <- Data
+activityDataImputed$steps <- impute(Data$steps, fun=mean)
+```
+
+
+##### Make a histogram of the total number of steps taken each day 
+```{r}
+stepsByDayImputed <- tapply(activityDataImputed$steps, activityDataImputed$date, sum)
+qplot(stepsByDayImputed, xlab='Total steps per day (Imputed)', ylab='Frequency using binwith 500', binwidth=500)
+```
+
+##### ... and Calculate and report the mean and median total number of steps taken per day. 
+```{r}
+stepsByDayMeanImputed <- mean(stepsByDayImputed)
+stepsByDayMedianImputed <- median(stepsByDayImputed)
+
+```
+Mean (Imputed): `r stepsByDayMeanImputed`
+Median (Imputed):  `r stepsByDayMedianImputed`
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
