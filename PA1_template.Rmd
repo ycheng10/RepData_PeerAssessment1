@@ -14,7 +14,7 @@ head(Data)
 ## What is mean total number of steps taken per day?
 
 Sum steps by day, create Histogram, and calculate mean and median.
-```{r StepPerday,echo=TRUE} 
+```{r StepPerday} 
 library(ggplot2)
 stepsperDay <- tapply(Data$steps, Data$date, sum, na.rm=TRUE)
 qplot(stepsperDay, binwidth=500, xlab='Total number of steps per day', ylab='Frequency')
@@ -25,8 +25,12 @@ The `Mean` is `r Mean` and the `Median` is `r Median`.
 
 
 ## What is the average daily activity pattern?
-
-
+```{r AvgDailyActivity} 
+AvgstepsByInterval <- aggregate(steps ~ interval, Data, mean,na.rm=TRUE)
+plot(AvgstepsByInterval$interval,AvgstepsByInterval$steps, type="l", xlab="5 Minute Interval", ylab="Average Number of Steps",main="Average daily activity pattern")
+maxInterval <- AvgstepsByInterval[which.max(AvgstepsByInterval$steps),1]
+```
+Maximum number of step is: `r maxInterval`
 
 ## Imputing missing values
 
